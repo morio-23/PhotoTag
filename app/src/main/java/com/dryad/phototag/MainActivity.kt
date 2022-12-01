@@ -2,21 +2,26 @@ package com.dryad.phototag
 
 import android.Manifest
 import android.content.ContentUris
-import android.net.Uri
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Debug
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.dryad.phototag.databinding.ActivityMainBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity() {
-    private val imageUris = mutableListOf<ItemData>()
+class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
+
+    private lateinit var binding: ActivityMainBinding
+
+    private val imageUris = mutableListOf<ItemDeta_register>()
+    private val getdata = mutableListOf<ItemDatabase>()
 
     val colums: Int = 5
     val collection = if(Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT){
@@ -38,20 +43,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         //RecyclerViewの取得
-        val recyclerView = findViewById<RecyclerView>(R.id.ViewList)
+        val recyclerView = binding.ViewList
 
         loadImages()
 
         Log.d("size", imageUris.size.toString())
 
         //Adapterの設定
-        val adapter = ItemAdapter(imageUris)
+        val adapter = ItemAdapter(this,imageUris, this)
         recyclerView.adapter = adapter
 
         //LayoutManagerの設定
         val layoutManager = GridLayoutManager(this, colums)
         recyclerView.layoutManager = layoutManager
+
     }
 
     override fun onResume() {
@@ -75,6 +85,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadImages(){
 
         imageUris.clear()
+        getdata.clear()
 
         val query = contentResolver.query(
             collection,
@@ -97,10 +108,25 @@ class MainActivity : AppCompatActivity() {
                 //Log.d("URI", contentUri.toString())
 
                 //dataApp?.setData(ItemData(displayName, contentUri))
-                imageUris.add(ItemData(displayName,contentUri))
+                imageUris.add(ItemDeta_register(displayName,contentUri.toString()))
+                getdata.add(ItemDatabase(0,displayName,contentUri.toString(), arrayListOf()))
             }
         }
 
+        GlobalScope.launch {
+            AppDatabase.getDatabase_item(applicationContext).DataBaseDao_item().insertAll(getdata)
+            AppDatabase.getDatabase_item(applicationContext).DataBaseDao_item().getAll().forEach {
+                Log.d("MainActivity", "${it.displayName}${it.uri}")
+            }
+        }
+
+    }
+
+
+    override fun onItemClickListener(uri :String) {
+        val toViewImage = Intent(this, ViewImageActivity::class.java)
+        toViewImage.putExtra("uri", uri)
+        startActivity(toViewImage)
     }
 
 

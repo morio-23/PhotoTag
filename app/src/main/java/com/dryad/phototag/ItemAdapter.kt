@@ -1,50 +1,52 @@
 package com.dryad.phototag
 
-import android.app.Application
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.dryad.phototag.databinding.ItemLayoutBinding
 
-class ItemAdapter(imageUris: MutableList<ItemData>): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    private val returnContext: ReturnContext? = null
-    var imageUris: MutableList<ItemData>? = null
+class ItemAdapter(Context: Context, imageUris: MutableList<ItemDeta_register>, private val onItemClickListener: ItemClickListener): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+
+    private var imageUris: MutableList<ItemDeta_register>? = null
 
     init {
         this.imageUris = imageUris
     }
 
-    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val textView: TextView
-        val imageView: ImageView
-        init {
-            textView = view.findViewById(R.id.item_text)
-            imageView = view.findViewById(R.id.item_image)
-        }
+    class ViewHolder(binding: ItemLayoutBinding): RecyclerView.ViewHolder(binding.root) {
+        val imageView: ImageView = binding.itemImage
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.item_layout, parent, false)
-        return ViewHolder(view)
+        val binding = ItemLayoutBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         Log.d("onBindViewHolder", "")
         val item = imageUris?.get(position)
         if (item != null) {
-            Log.d("URI_adapter", item.contentUri.toString())
-            viewHolder.textView.text = item.displayName
-            //Glide.with(this.returnContext?.getAppContext()!!).load(item.contentUri).into(viewHolder.imageView)
-            viewHolder.imageView.setImageURI(item.contentUri)
+            Log.d("URI_adapter", item.contentUri)
+            viewHolder.imageView.setImageURI(Uri.parse(item.contentUri))
+            viewHolder.imageView.setOnClickListener{
+                onItemClickListener.onItemClickListener(item.contentUri)
+            }
         }
     }
 
     override fun getItemCount() = imageUris?.size ?: 0
+
+    interface ItemClickListener{
+        fun onItemClickListener(uri: String)
+    }
+
 }
