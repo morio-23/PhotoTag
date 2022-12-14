@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dryad.phototag.databinding.ActivityMainBinding
@@ -114,8 +113,8 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
         }
 
         GlobalScope.launch {
-            AppDatabase.getDatabase_item(applicationContext).DataBaseDao_item().insertAll(getdata)
-            AppDatabase.getDatabase_item(applicationContext).DataBaseDao_item().getAll().forEach {
+            AppDatabase.getDatabase_item(applicationContext).DataBaseDao().insertAll(getdata)
+            AppDatabase.getDatabase_item(applicationContext).DataBaseDao().getAll().forEach {
                 Log.d("MainActivity", "${it.displayName}${it.uri}")
             }
         }

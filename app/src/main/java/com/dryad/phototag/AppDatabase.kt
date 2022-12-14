@@ -9,7 +9,7 @@ import java.lang.reflect.Type
 @Database(entities = [ItemDatabase::class], version = 1, exportSchema = false)//最終アップデート：2022/11/29
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun DataBaseDao_item(): DataBaseDao_item
+    abstract fun DataBaseDao(): DataBaseDao
 
     companion object {
         @Volatile
@@ -23,6 +23,25 @@ abstract class AppDatabase: RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "ItemDatabase"
+                )
+                    .apply {
+                        //migration
+                    }
+                    .build()
+                INSTANCE_main = instance
+
+                instance
+            }
+        }
+
+        fun getDatabase_tag(
+            context: Context
+        ): AppDatabase {
+            return INSTANCE_main ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context,
+                    AppDatabase::class.java,
+                    "TagDatabase"
                 )
                     .apply {
                         //migration

@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface DataBaseDao_item {
+interface DataBaseDao {
     @Nullable
     @Insert
     suspend fun insertAll(ItemDatabase: MutableList<ItemDatabase>)

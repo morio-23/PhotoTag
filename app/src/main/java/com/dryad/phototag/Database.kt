@@ -12,3 +12,10 @@ data class ItemDatabase(
     @ColumnInfo(name = "URI") val uri: String?,
     @ColumnInfo(name = "tag") val tag: ArrayList<String>?
 )
+
+@Entity(tableName = "Tag_tbl")
+data class TagDatabase(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "tagName") val tagName: String,
+    @ColumnInfo(name = "tagColor") val tagColor: String
+)
