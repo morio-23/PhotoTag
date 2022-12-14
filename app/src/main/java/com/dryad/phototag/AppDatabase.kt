@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-@Database(entities = [ItemDatabase::class], version = 1, exportSchema = false)//最終アップデート：2022/11/29
+@Database(entities = [ItemDatabase::class, TagDatabase::class], version = 1, exportSchema = false)//最終アップデート：2022/11/29
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun DataBaseDao(): DataBaseDao

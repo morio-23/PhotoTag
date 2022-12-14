@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.dryad.phototag.databinding.ActivityViewImageBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,4 +34,31 @@ class ViewImageActivity : AppCompatActivity() {
         }
 
     }
+
+    //アプリバーにメニューを作成するメソッド
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //インフレーターを使ってメニューを表示させる
+        val inflater = menuInflater
+        inflater.inflate(R.menu.image_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.set_tag -> {
+                //タグ追加処理
+                val dialog = SetTagDialogFragment()
+                dialog.show(supportFragmentManager, "simple")
+                true
+            }
+            R.id.show_info -> {
+                //画像詳細表示処理
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+
 }

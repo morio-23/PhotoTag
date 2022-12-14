@@ -13,9 +13,12 @@ interface DataBaseDao {
     suspend fun insertAll(ItemDatabase: MutableList<ItemDatabase>)
 
     @Query("SELECT * FROM item_tbl")
-    fun getAll(): List<ItemDatabase>
+    fun getAllItem(): List<ItemDatabase>
 
     @Query("SELECT displayName FROM item_tbl WHERE URI = :uri")
     fun returnDisplayName(uri: String): String
+
+    @Query("SELECT tagName FROM tag_tbl")
+    fun getAllTagName(): Array<String>?
 
 }

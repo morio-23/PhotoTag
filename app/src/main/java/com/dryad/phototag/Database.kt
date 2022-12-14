@@ -17,5 +17,5 @@ data class ItemDatabase(
 data class TagDatabase(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "tagName") val tagName: String,
-    @ColumnInfo(name = "tagColor") val tagColor: String
+    @ColumnInfo(name = "tagColor") val tagColor: String?
 )

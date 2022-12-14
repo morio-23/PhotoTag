@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
 
         GlobalScope.launch {
             AppDatabase.getDatabase_item(applicationContext).DataBaseDao().insertAll(getdata)
-            AppDatabase.getDatabase_item(applicationContext).DataBaseDao().getAll().forEach {
+            AppDatabase.getDatabase_item(applicationContext).DataBaseDao().getAllItem().forEach {
                 Log.d("MainActivity", "${it.displayName}${it.uri}")
             }
         }
