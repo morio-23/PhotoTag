@@ -8,5 +8,8 @@
     <string name="set_tag_title">タグの追加/削除</string>
     <string name="view_info_title">画像の詳細</string>
 
+    <!--TagSettingActivity-->
+    <string name="add_tag_title">タグの追加</string>
+
 
 </resources>

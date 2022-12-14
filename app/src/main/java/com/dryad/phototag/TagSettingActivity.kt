@@ -1,15 +1,16 @@
 package com.dryad.phototag
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.recyclerview.widget.GridLayoutManager
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dryad.phototag.databinding.ActivityMainBinding
 import com.dryad.phototag.databinding.ActivityTagSettingBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
 
@@ -38,6 +39,13 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         //LayoutManagerの設定
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
+
+        binding.floatingAddButton.setOnClickListener {
+            val dialog = AddTagDialogFragment()
+            dialog.show(supportFragmentManager, "simple")
+            true
+        }
+
     }
 
     override fun onItemClickListener() {
@@ -45,5 +53,26 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         //タグの詳細設定かな？
         //フラグメント起動
         Log.d("Listener","tapped")
+
     }
+
+    //アプリバーにメニューを作成するメソッド
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //インフレーターを使ってメニューを表示させる
+        val inflater = menuInflater
+        inflater.inflate(R.menu.tagsetting_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.add_tag -> {
+                //タグ追加フラグメント起動
+
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 }

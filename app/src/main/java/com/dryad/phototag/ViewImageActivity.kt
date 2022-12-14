@@ -1,11 +1,10 @@
 package com.dryad.phototag
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.dryad.phototag.databinding.ActivityViewImageBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

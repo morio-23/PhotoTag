@@ -11,9 +11,33 @@
       android:id="@+id/tag_recyclerView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginStart="1dp"
-      android:layout_marginTop="1dp"
+      android:layout_marginStart="0dp"
+      android:layout_marginTop="?attr/actionBarSize"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
+
+  <androidx.appcompat.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background='@color/teal_700'
+      android:elevation="4dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:title="タグの管理"
+      app:titleTextColor="#ffffff"
+      android:theme="@style/AppTheme.Toolbar"/>
+
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floatingAddButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="16dp"
+      android:clickable="true"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:srcCompat="@android:drawable/ic_menu_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
