@@ -3,7 +3,10 @@ package com.dryad.phototag
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.dryad.phototag.databinding.ActivityViewImageBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ViewImageActivity : AppCompatActivity() {
 
@@ -17,8 +20,16 @@ class ViewImageActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        setSupportActionBar(binding.toolbar)
+
         val contentUri = intent.getStringExtra("uri")
 
         binding.imageView.setImageURI(Uri.parse(contentUri))
+
+        GlobalScope.launch {
+            if(contentUri!=null)
+            binding.toolbar.title = AppDatabase.getDatabase_item(applicationContext).DataBaseDao().returnDisplayName(contentUri)
+        }
+
     }
 }
