@@ -21,4 +21,7 @@ interface DataBaseDao {
     @Query("SELECT tagName FROM tag_tbl")
     fun getAllTagName(): Array<String>?
 
+    @Query("SELECT tagName,tagColor  FROM tag_tbl")
+    fun getAllTag(): List<TagData>
+
 }

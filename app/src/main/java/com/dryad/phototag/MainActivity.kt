@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dryad.phototag.databinding.ActivityMainBinding
@@ -40,11 +42,13 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_main)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        setSupportActionBar(binding.toolbar)
 
         //RecyclerViewの取得
         val recyclerView = binding.ViewList
@@ -121,11 +125,30 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
 
     }
 
-
     override fun onItemClickListener(uri :String) {
         val toViewImage = Intent(this, ViewImageActivity::class.java)
         toViewImage.putExtra("uri", uri)
         startActivity(toViewImage)
+    }
+
+    //アプリバーにメニューを作成するメソッド
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //インフレーターを使ってメニューを表示させる
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.open_tag_setting -> {
+                //タグ管理画面
+                val toTagSetting = Intent(this, TagSettingActivity::class.java)
+                startActivity(toTagSetting)
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 
