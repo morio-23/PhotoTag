@@ -11,5 +11,7 @@
     <!--TagSettingActivity-->
     <string name="add_tag_title">タグの追加</string>
 
+    <!--AddTagDialogFragment-->
+    <string name="tag_name_hint">タグのタイトル</string>
 
 </resources>

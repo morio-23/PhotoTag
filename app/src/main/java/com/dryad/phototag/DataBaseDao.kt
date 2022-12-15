@@ -2,7 +2,6 @@ package com.dryad.phototag
 
 import androidx.annotation.Nullable
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 
@@ -21,7 +20,10 @@ interface DataBaseDao {
     @Query("SELECT tagName FROM tag_tbl")
     fun getAllTagName(): Array<String>?
 
-    @Query("SELECT tagName,tagColor  FROM tag_tbl")
+    @Query("SELECT tagName, tagColor FROM tag_tbl")
     fun getAllTag(): List<TagData>
+
+    @Insert
+    fun addTag(tagDatabase: TagDatabase)
 
 }

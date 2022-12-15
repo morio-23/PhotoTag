@@ -7,9 +7,64 @@
 
 
     <EditText
+        android:id="@+id/edit_tagname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_text"
-        android:hint="入力" />
+        android:hint="@string/tag_name_hint" />
+
+    <RadioGroup
+        android:id="@+id/choice_color_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp">
+
+        <RadioButton
+            android:id="@+id/radioButton_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#000000" />
+
+        <RadioButton
+            android:id="@+id/radioButton_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#0000FF" />
+
+        <RadioButton
+            android:id="@+id/radioButton_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#00FF00"/>
+
+        <RadioButton
+            android:id="@+id/radioButton_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#FF0000" />
+
+        <RadioButton
+            android:id="@+id/radioButton_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#FF00FF" />
+
+        <RadioButton
+            android:id="@+id/radioButton_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#00FFFF" />
+
+        <RadioButton
+            android:id="@+id/radioButton_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#FFFF00" />
+
+    </RadioGroup>
+
+
+
 
 </FrameLayout>

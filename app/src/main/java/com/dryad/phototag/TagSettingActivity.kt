@@ -1,5 +1,6 @@
 package com.dryad.phototag
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dryad.phototag.databinding.ActivityTagSettingBinding
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -26,12 +28,33 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         val view = binding.root
         setContentView(view)
 
-        val recyclerView = binding.tagRecyclerView
+        //adapter適用をデータベース読込後にしなければいけないので全てコルーチンの中に入れるためのsuspended fun
+        GlobalScope.launch {
+            setRecyclerView()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        Log.d("TagSettingA_onResume","")
 
         GlobalScope.launch {
+            reloadRecyclerView()
+        }
+    }
+
+    private suspend fun setRecyclerView(){
+        val recyclerView = binding.tagRecyclerView
+
+        val loadTag = GlobalScope.launch {
             tagData = AppDatabase.getDatabase_tag(applicationContext).DataBaseDao().getAllTag()
         }
 
+        loadTag.join()
+
+        Log.d("tagData",tagData.toString())
         //Adapterの設定
         val adapter = TagAdapter(tagData, this)
         recyclerView.adapter = adapter
@@ -45,6 +68,20 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
             dialog.show(supportFragmentManager, "simple")
             true
         }
+    }
+
+    private suspend fun reloadRecyclerView(){
+        val recyclerView = binding.tagRecyclerView
+
+        val loadTag = GlobalScope.launch {
+            tagData = AppDatabase.getDatabase_tag(applicationContext).DataBaseDao().getAllTag()
+        }
+
+        loadTag.join()
+
+        Log.d("tagData",tagData.toString())
+
+        recyclerView.adapter?.notifyDataSetChanged()
 
     }
 

@@ -5,6 +5,7 @@ import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -27,11 +28,13 @@ class TagAdapter(val tagList: List<TagData>,private val onItemClickListener: Tag
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        if(tagList[0] == TagData("","")) { //初期化のままであればタグが存在しないと出力。全てのタグを消した時も同様になるよう設定すること。
+        Log.d("TagAdapter", "TagData:"+tagList[position])
+        Log.d("TagAdapter", "position:$position")
+        if(tagList[0] == TagData("","") || tagList.isEmpty()) { //初期化のままであればタグが存在しないと出力。全てのタグを消した時も同様になるよう設定すること。
             viewHolder.tagNameText.text = "タグが存在しません"
         }else{
             viewHolder.tagNameText.text = tagList[position].tagName
-            if (tagList[position].tagColor != null) {
+            if (!tagList[position].tagColor.isNullOrBlank()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     viewHolder.tagImageView.colorFilter = BlendModeColorFilter(
                         Color.parseColor(tagList[position].tagColor),
