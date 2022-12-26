@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
         val view = binding.root
         setContentView(view)
 
-        setSupportActionBar(binding.toolbar)
+        //setSupportActionBar(binding.toolbar)
 
         //RecyclerViewの取得
         val recyclerView = binding.ViewList
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
                 val displayName = it.getString(displayNameColmun)
                 val contentUri = ContentUris.withAppendedId(collection, it.getLong(idColmun))
 
-                //Log.d("URI", contentUri.toString())
+                Log.d("URI", contentUri.toString())
 
                 //dataApp?.setData(ItemData(displayName, contentUri))
                 imageUris.add(ItemDeta_register(displayName,contentUri.toString()))
