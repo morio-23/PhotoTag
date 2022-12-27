@@ -21,7 +21,7 @@ class ViewImageActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        //setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val contentUri = intent.getStringExtra("uri")
 

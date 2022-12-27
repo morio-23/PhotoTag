@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
         val view = binding.root
         setContentView(view)
 
-        //setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         //RecyclerViewの取得
         val recyclerView = binding.ViewList
