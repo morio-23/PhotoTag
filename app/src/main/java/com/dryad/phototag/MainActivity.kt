@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
                 Log.d("URI", contentUri.toString())
 
                 imageUris.add(ItemDeta_register(contentUri.toString(),displayName))
-                getdata.add(ItemDatabase(contentUri.toString(), displayName, arrayListOf()))
+                getdata.add(ItemDatabase(contentUri.toString(), displayName, listOf("")))
             }
         }
 

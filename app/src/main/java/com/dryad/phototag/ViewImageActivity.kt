@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class ViewImageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewImageBinding
+    private lateinit var contentUri: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +24,7 @@ class ViewImageActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        val contentUri = intent.getStringExtra("uri")
+        contentUri = intent.getStringExtra("uri").toString()
 
         binding.imageView.setImageURI(Uri.parse(contentUri))
 
@@ -47,6 +48,9 @@ class ViewImageActivity : AppCompatActivity() {
             R.id.set_tag -> {
                 //タグ追加処理
                 val dialog = SetTagDialogFragment()
+                val args = Bundle()
+                args.putString("contentUri",contentUri)
+                dialog.arguments = args
                 dialog.show(supportFragmentManager, "simple")
                 true
             }

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -14,18 +13,30 @@ import kotlinx.coroutines.runBlocking
 class SetTagDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        val checkedItems = booleanArrayOf(false, false ,false) // 保存されたデータに置き換えることができる
-        val mSelectedItems:MutableList<Int> = mutableListOf()
-        setupSelectedItems(checkedItems, mSelectedItems)
+        val bundle = arguments
+        var contentUri = ""
+
+        if(bundle != null){
+            contentUri = bundle.getString("contentUri").toString()
+        }
+
         var tagArray: Array<String> = arrayOf("")
+        var tagStatus: ArrayList<String> = arrayListOf("")
 
         val job = GlobalScope.launch {
             tagArray = AppDatabase.getDatabase_tag(this@SetTagDialogFragment.requireContext()).DataBaseDao().getAllTagName()!!
+            tagStatus = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri) as ArrayList<String>
         }
 
         runBlocking {
             job.join()
         }
+
+        val checkedItems = returnCheckdTag(tagArray, tagStatus) // 保存されたデータに置き換えることができる
+
+        val mSelectedItems:MutableList<Int> = mutableListOf()
+
+        setupSelectedItems(checkedItems, mSelectedItems)
 
         val builder = AlertDialog.Builder(activity)
 
@@ -58,7 +69,9 @@ class SetTagDialogFragment: DialogFragment() {
                     }
                 }
                 .setPositiveButton("OK") { dialog, id ->
-
+                    val job = GlobalScope.launch {
+                        AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().updateTag(contentUri, returnSelectedTag(tagArray, mSelectedItems))
+                    }
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
 
@@ -79,6 +92,33 @@ class SetTagDialogFragment: DialogFragment() {
             }
             index++
         }
+    }
+
+    private fun returnCheckdTag(tagArray: Array<String>, tagStatus:ArrayList<String>): BooleanArray {
+
+        var mCheckedItems:MutableList<Boolean> = mutableListOf()
+
+        tagArray.forEachIndexed { i, element ->
+            if(element in tagStatus){
+                mCheckedItems.add(true)
+            }else{
+                mCheckedItems.add(false)
+            }
+        }
+
+        val BooleanArray = mCheckedItems.toTypedArray().toBooleanArray()
+        return BooleanArray
+    }
+
+    private fun returnSelectedTag(tagArray: Array<String>, mSelectedItems: MutableList<Int>): ArrayList<String>{
+
+        var string_mSelectedItems = arrayListOf<String>()
+
+        mSelectedItems.forEach{
+            string_mSelectedItems.add(tagArray[it])
+        }
+
+        return string_mSelectedItems
     }
 
 }
