@@ -21,26 +21,32 @@ class SetTagDialogFragment: DialogFragment() {
         }
 
         var tagArray: Array<String> = arrayOf("")
-        var tagStatus: ArrayList<String> = arrayListOf("")
+        var tagStatus: List<String> = mutableListOf("")
 
         val job = GlobalScope.launch {
             tagArray = AppDatabase.getDatabase_tag(this@SetTagDialogFragment.requireContext()).DataBaseDao().getAllTagName()!!
-            tagStatus = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri) as ArrayList<String>
+            tagStatus = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri)
+            var aaa = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri).toString()
+            Log.d("SetTagDialog", aaa)
         }
 
         runBlocking {
             job.join()
         }
 
-        val checkedItems = returnCheckdTag(tagArray, tagStatus) // 保存されたデータに置き換えることができる
+        Log.d("SetTagDialog", tagArray.contentToString())
+        Log.d("SetTagDialog", tagStatus.toString())
+        Log.d("SetTagDialog", tagStatus[0])
+
+
+        val checkedItems = returnCheckedTag(tagArray, tagStatus) // 保存されたデータに置き換えることができる
+        Log.d("checkedItems", checkedItems.contentToString())
 
         val mSelectedItems:MutableList<Int> = mutableListOf()
 
         setupSelectedItems(checkedItems, mSelectedItems)
 
         val builder = AlertDialog.Builder(activity)
-
-        Log.d("SetTagDialog", tagArray.toString())
 
         if(tagArray.isNullOrEmpty()){
             builder.setTitle("タグが存在しません")
@@ -94,23 +100,25 @@ class SetTagDialogFragment: DialogFragment() {
         }
     }
 
-    private fun returnCheckdTag(tagArray: Array<String>, tagStatus:ArrayList<String>): BooleanArray {
+    private fun returnCheckedTag(tagArray: Array<String>, tagStatus:List<String>): BooleanArray {
 
         var mCheckedItems:MutableList<Boolean> = mutableListOf()
 
         tagArray.forEachIndexed { i, element ->
-            if(element in tagStatus){
+            if(element in tagStatus[0]){    //なぜかtagStatusが２次元配列で返ってきているのでこうしないと意図した挙動をしない。解決したい。
                 mCheckedItems.add(true)
             }else{
                 mCheckedItems.add(false)
             }
         }
 
+        Log.d("returnCheckedTag", mCheckedItems.toTypedArray().contentToString())
+
         val BooleanArray = mCheckedItems.toTypedArray().toBooleanArray()
         return BooleanArray
     }
 
-    private fun returnSelectedTag(tagArray: Array<String>, mSelectedItems: MutableList<Int>): ArrayList<String>{
+    private fun returnSelectedTag(tagArray: Array<String>, mSelectedItems: MutableList<Int>): List<String>{
 
         var string_mSelectedItems = arrayListOf<String>()
 
@@ -118,6 +126,7 @@ class SetTagDialogFragment: DialogFragment() {
             string_mSelectedItems.add(tagArray[it])
         }
 
+        Log.d("returnSelectedTag", string_mSelectedItems.toString())
         return string_mSelectedItems
     }
 
