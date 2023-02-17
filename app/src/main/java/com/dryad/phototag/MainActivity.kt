@@ -11,18 +11,20 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.content.PermissionChecker
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dryad.phototag.databinding.ActivityMainBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
+class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchByTagDialogFragment.DialogListener {
 
     private lateinit var binding: ActivityMainBinding
 
     private val imageUris = mutableListOf<ItemDeta_register>()
     private val getdata = mutableListOf<ItemDatabase>()
+    private var searchTagStatus = arrayListOf<Boolean>()
 
     val colums: Int = 5
     val collection = if(Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT){
@@ -117,9 +119,12 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
 
         GlobalScope.launch {
             AppDatabase.getDatabase_item(applicationContext).DataBaseDao().insertAll(getdata)
+            //読み込み確認用
+            /*
             AppDatabase.getDatabase_item(applicationContext).DataBaseDao().getAllItem().forEach {
                 Log.d("MainActivity", "${it.displayName}${it.uri}")
             }
+            */
         }
 
     }
@@ -146,9 +151,22 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener {
                 startActivity(toTagSetting)
                 return true
             }
+            R.id.search_by_tag -> {
+                //タグによる検索
+                val dialog = SearchByTagDialogFragment()
+                val args = Bundle()
+                args.putSerializable("searchStatus", searchTagStatus)
+                dialog.arguments = args
+                dialog.show(supportFragmentManager, "simple")
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    override fun onDialogCheckedItems(dialog: DialogFragment, checkedItems: BooleanArray) {
+        searchTagStatus = checkedItems.toList() as ArrayList<Boolean>
+        Log.d("Result", searchTagStatus.toString())
+    }
 
 }

@@ -3,6 +3,7 @@
 
     <!--MainActivity-->
     <string name="open_tag_setting">タグ管理</string>
+    <string name="search_by_tag">タグで検索</string>
 
     <!--ViewImageActivity-->
     <string name="set_tag_title">タグの追加/削除</string>

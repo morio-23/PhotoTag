@@ -6,4 +6,10 @@
         android:title="@string/open_tag_setting"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/search_by_tag"
+        android:title="@string/search_by_tag"
+        app:showAsAction="never"
+        />
+
 </menu>

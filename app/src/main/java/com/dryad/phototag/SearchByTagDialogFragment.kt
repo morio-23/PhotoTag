@@ -2,6 +2,7 @@ package com.dryad.phototag
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.DialogFragment
@@ -9,35 +10,48 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+class SearchByTagDialogFragment: DialogFragment() {
+    public interface DialogListener{
+        public fun onDialogCheckedItems(dialog: DialogFragment, checkedItems: BooleanArray)
+    }
 
-class SetTagDialogFragment: DialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    var listener:DialogListener? = null
 
-        val bundle = arguments
-        var contentUri = ""
-
-        if(bundle != null){
-            contentUri = bundle.getString("contentUri").toString()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as DialogListener
+        }catch (e: Exception){
+            Log.e("ERROR","CANNOT FIND LISTENER")
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         var tagArray: Array<String> = arrayOf("")
         var tagStatus: List<String> = mutableListOf("")
 
         val job = GlobalScope.launch {
-            tagArray = AppDatabase.getDatabase_tag(this@SetTagDialogFragment.requireContext()).DataBaseDao().getAllTagName()!!
-            tagStatus = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri)
-            var aaa = AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().returnTagStatus(contentUri).toString()
-            Log.d("SetTagDialog", aaa)
+            tagArray = AppDatabase.getDatabase_tag(this@SearchByTagDialogFragment.requireContext()).DataBaseDao().getAllTagName()!!
         }
 
         runBlocking {
             job.join()
         }
 
-        val checkedItems = returnCheckedTag(tagArray, tagStatus) // 保存されたデータに置き換えることができる
+        Log.d("SearchByTagDialog", tagArray.contentToString())
+
+        var checkedItems = returnCheckedTag(tagArray, tagStatus) // 保存されたデータに置き換えることができる
         Log.d("checkedItems", checkedItems.contentToString())
 
         val mSelectedItems:MutableList<Int> = mutableListOf()
+        var selectedItems:MutableList<String>
 
         setupSelectedItems(checkedItems, mSelectedItems)
 
@@ -71,7 +85,7 @@ class SetTagDialogFragment: DialogFragment() {
                 }
                 .setPositiveButton("OK") { dialog, id ->
                     val job = GlobalScope.launch {
-                        AppDatabase.getDatabase_item(this@SetTagDialogFragment.requireContext()).DataBaseDao().updateTag(contentUri, returnSelectedTag(tagArray, mSelectedItems))
+                        selectedItems = returnSelectedTag(tagArray, mSelectedItems)
                     }
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
@@ -109,13 +123,12 @@ class SetTagDialogFragment: DialogFragment() {
 
         Log.d("returnCheckedTag", mCheckedItems.toTypedArray().contentToString())
 
-        val BooleanArray = mCheckedItems.toTypedArray().toBooleanArray()
-        return BooleanArray
+        return mCheckedItems.toTypedArray().toBooleanArray()
     }
 
-    private fun returnSelectedTag(tagArray: Array<String>, mSelectedItems: MutableList<Int>): List<String>{
+    private fun returnSelectedTag(tagArray: Array<String>, mSelectedItems: MutableList<Int>): MutableList<String> {
 
-        var string_mSelectedItems = arrayListOf<String>()
+        var string_mSelectedItems = mutableListOf<String>()
 
         mSelectedItems.forEach{
             string_mSelectedItems.add(tagArray[it])
@@ -124,5 +137,4 @@ class SetTagDialogFragment: DialogFragment() {
         Log.d("returnSelectedTag", string_mSelectedItems.toString())
         return string_mSelectedItems
     }
-
 }
