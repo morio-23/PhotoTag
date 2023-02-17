@@ -18,6 +18,9 @@ interface DataBaseDao {
     @Query("SELECT * FROM item_tbl")
     fun getAllItem(): List<ItemDatabase>
 
+    @Query("SELECT * FROM item_tbl WHERE tag IN (:tag)")
+    fun getSearchedItem(tag: List<String>): List<ItemDatabase>
+
     @Query("SELECT displayName FROM item_tbl WHERE URI = :uri")
     fun returnDisplayName(uri: String): String
 

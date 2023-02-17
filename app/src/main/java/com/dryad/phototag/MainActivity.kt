@@ -13,18 +13,21 @@ import android.view.MenuItem
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ActivityMainBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchByTagDialogFragment.DialogListener {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val imageUris = mutableListOf<ItemDeta_register>()
+    private var imageUris = mutableListOf<ItemData_register>()
     private val getdata = mutableListOf<ItemDatabase>()
     private var searchTagStatus = arrayListOf<Boolean>()
+    private var checkedItems = mutableListOf<String>()
 
     val colums: Int = 5
     val collection = if(Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT){
@@ -59,13 +62,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
         Log.d("size", imageUris.size.toString())
 
-        //Adapterの設定
-        val adapter = ItemAdapter(this,imageUris, this)
-        recyclerView.adapter = adapter
-
-        //LayoutManagerの設定
-        val layoutManager = GridLayoutManager(this, colums)
-        recyclerView.layoutManager = layoutManager
+        showImage(recyclerView)
 
     }
 
@@ -112,7 +109,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
                 Log.d("URI", contentUri.toString())
 
-                imageUris.add(ItemDeta_register(contentUri.toString(),displayName))
+                imageUris.add(ItemData_register(contentUri.toString(),displayName))
                 getdata.add(ItemDatabase(contentUri.toString(), displayName, listOf("")))
             }
         }
@@ -127,6 +124,43 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
             */
         }
 
+    }
+
+    private fun showImage(recyclerView: RecyclerView){
+        Log.d("showImage", "inFunction")
+
+        //Adapterの設定
+        val adapter = ItemAdapter(this,imageUris, this)
+        recyclerView.adapter = adapter
+
+        //LayoutManagerの設定
+        val layoutManager = GridLayoutManager(this, colums)
+        recyclerView.layoutManager = layoutManager
+
+        adapter.notifyDataSetChanged()//ないとListView 再読み込みしない
+    }
+
+    private fun reloadImageUris(){
+        if(imageUris.isEmpty()) {
+            var searchedData = listOf<ItemDatabase>()
+            Log.d("reloadImageUris_1",checkedItems.toString())
+            val job = GlobalScope.launch {
+                searchedData = AppDatabase.getDatabase_item(applicationContext).DataBaseDao()
+                    .getSearchedItem(checkedItems)
+                Log.d("reloadImageUris_2",searchedData.toString())
+            }
+
+            runBlocking {
+                job.join()
+            }
+
+            searchedData.forEach {
+                imageUris.add(ItemData_register(it.uri, it.displayName))
+            }
+
+            Log.d("reloadImageUris_3", imageUris.toString())
+        }
+        showImage(binding.ViewList)
     }
 
     override fun onItemClickListener(uri :String) {
@@ -164,9 +198,11 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
         }
     }
 
-    override fun onDialogCheckedItems(dialog: DialogFragment, checkedItems: BooleanArray) {
-        searchTagStatus = checkedItems.toList() as ArrayList<Boolean>
-        Log.d("Result", searchTagStatus.toString())
+    override fun onDialogCheckedItems(dialog: DialogFragment, checkedItemList: MutableList<String>) {
+        Log.d("onDialogCheckedItems", checkedItemList.toString())
+        imageUris.clear()
+        checkedItems = checkedItemList
+        reloadImageUris()
     }
 
 }

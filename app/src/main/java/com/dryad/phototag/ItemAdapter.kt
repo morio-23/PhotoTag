@@ -1,21 +1,18 @@
 package com.dryad.phototag
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ItemLayoutBinding
 
 
-class ItemAdapter(Context: Context, imageUris: MutableList<ItemDeta_register>, private val onItemClickListener: ItemClickListener): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(Context: Context, imageUris: MutableList<ItemData_register>, private val onItemClickListener: ItemClickListener): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    private var imageUris: MutableList<ItemDeta_register>? = null
+    private var imageUris: MutableList<ItemData_register>? = null
 
     init {
         this.imageUris = imageUris

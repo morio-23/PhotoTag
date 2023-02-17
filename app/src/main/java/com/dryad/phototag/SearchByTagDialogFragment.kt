@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 
 class SearchByTagDialogFragment: DialogFragment() {
     public interface DialogListener{
-        public fun onDialogCheckedItems(dialog: DialogFragment, checkedItems: BooleanArray)
+        public fun onDialogCheckedItems(dialog: DialogFragment, checkedItems: MutableList<String>)
     }
 
     var listener:DialogListener? = null
@@ -84,8 +84,10 @@ class SearchByTagDialogFragment: DialogFragment() {
                     }
                 }
                 .setPositiveButton("OK") { dialog, id ->
-                    val job = GlobalScope.launch {
-                        selectedItems = returnSelectedTag(tagArray, mSelectedItems)
+                    selectedItems = returnSelectedTag(tagArray, mSelectedItems)
+                    if(selectedItems.isNotEmpty()){
+                        Log.d("FragmentReturn",selectedItems.toString())
+                        listener?.onDialogCheckedItems(this,selectedItems)
                     }
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
