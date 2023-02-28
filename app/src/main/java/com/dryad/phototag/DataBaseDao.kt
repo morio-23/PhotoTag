@@ -18,8 +18,9 @@ interface DataBaseDao {
     @Query("SELECT * FROM item_tbl")
     fun getAllItem(): List<ItemDatabase>
 
-    @Query("SELECT * FROM item_tbl WHERE tag IN (:tag)")
-    fun getSearchedItem(tag: List<String>): List<ItemDatabase>
+    @Query("SELECT URI FROM item_tbl WHERE tag like :string ")
+    fun getSearchedItem(string: String): List<String>
+    //where in にListを渡したときの返すカラムは一列だけじゃないといけないらしい
 
     @Query("SELECT displayName FROM item_tbl WHERE URI = :uri")
     fun returnDisplayName(uri: String): String

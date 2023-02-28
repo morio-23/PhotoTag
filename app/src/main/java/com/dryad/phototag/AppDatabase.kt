@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
+import android.util.Log
 
 @Database(entities = [ItemDatabase::class, TagDatabase::class], version = 1, exportSchema = false)//最終アップデート：2022/11/29
 @TypeConverters(ListConverters::class)
@@ -60,12 +61,21 @@ class ListConverters {
     @TypeConverter
     fun fromString(value: String?): List<String> {
         val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        if(value!=null) {
+            Log.d("TypeConverterFromString", value)
+        }else {
+            Log.d("TypeConverterFromString", "null")
+        }
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
     fun fromList(list: List<String?>?): String {
         val gson = Gson()
+        if(list!=null)
+        Log.d("TypeConverterFromList",list.toString())
+        else
+        Log.d("TypeConverterFromList","null")
         return gson.toJson(list)
     }
 }

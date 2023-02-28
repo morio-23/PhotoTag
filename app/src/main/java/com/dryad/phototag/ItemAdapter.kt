@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ItemLayoutBinding
 
 
-class ItemAdapter(Context: Context, imageUris: MutableList<ItemData_register>, private val onItemClickListener: ItemClickListener): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(Context: Context, imageUris: MutableList<String>, private val onItemClickListener: ItemClickListener): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    private var imageUris: MutableList<ItemData_register>? = null
+    private var contentUris: MutableList<String>? = null
 
     init {
-        this.imageUris = imageUris
+        this.contentUris = imageUris
     }
 
     class ViewHolder(binding: ItemLayoutBinding): RecyclerView.ViewHolder(binding.root) {
@@ -30,17 +30,17 @@ class ItemAdapter(Context: Context, imageUris: MutableList<ItemData_register>, p
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         Log.d("onBindViewHolder", "")
-        val item = imageUris?.get(position)
+        val item = contentUris?.get(position)
         if (item != null) {
-            Log.d("URI_adapter", item.contentUri)
-            viewHolder.imageView.setImageURI(Uri.parse(item.contentUri))
+            Log.d("URI_adapter", item)
+            viewHolder.imageView.setImageURI(Uri.parse(item))
             viewHolder.imageView.setOnClickListener{
-                onItemClickListener.onItemClickListener(item.contentUri)
+                onItemClickListener.onItemClickListener(item)
             }
         }
     }
 
-    override fun getItemCount() = imageUris?.size ?: 0
+    override fun getItemCount() = contentUris?.size ?: 0
 
     interface ItemClickListener{
         fun onItemClickListener(uri: String)

@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
     private lateinit var binding: ActivityMainBinding
 
-    private var imageUris = mutableListOf<ItemData_register>()
+    private var contentUris = mutableListOf<String>()
     private val getdata = mutableListOf<ItemDatabase>()
     private var searchTagStatus = arrayListOf<Boolean>()
     private var checkedItems = mutableListOf<String>()
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
         loadImages()
 
-        Log.d("size", imageUris.size.toString())
+        Log.d("size", contentUris.size.toString())
 
         showImage(recyclerView)
 
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
     private fun loadImages(){
 
-        imageUris.clear()
+        contentUris.clear()
         getdata.clear()
 
         val query = contentResolver.query(
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
                 Log.d("URI", contentUri.toString())
 
-                imageUris.add(ItemData_register(contentUri.toString(),displayName))
+                contentUris.add(contentUri.toString())
                 getdata.add(ItemDatabase(contentUri.toString(), displayName, listOf("")))
             }
         }
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
         Log.d("showImage", "inFunction")
 
         //Adapterの設定
-        val adapter = ItemAdapter(this,imageUris, this)
+        val adapter = ItemAdapter(this,contentUris, this)
         recyclerView.adapter = adapter
 
         //LayoutManagerの設定
@@ -141,26 +141,30 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
     }
 
     private fun reloadImageUris(){
-        if(imageUris.isEmpty()) {
-            var searchedData = listOf<ItemDatabase>()
+        if(contentUris.isEmpty()) {
             Log.d("reloadImageUris_1",checkedItems.toString())
             val job = GlobalScope.launch {
-                searchedData = AppDatabase.getDatabase_item(applicationContext).DataBaseDao()
-                    .getSearchedItem(checkedItems)
-                Log.d("reloadImageUris_2",searchedData.toString())
+                contentUris = AppDatabase.getDatabase_item(applicationContext).DataBaseDao()
+                    .getSearchedItem(toSearchString()).toMutableList()
+                Log.d("reloadImageUris_2",contentUris.toString())
             }
 
             runBlocking {
                 job.join()
             }
 
-            searchedData.forEach {
-                imageUris.add(ItemData_register(it.uri, it.displayName))
-            }
-
-            Log.d("reloadImageUris_3", imageUris.toString())
+            Log.d("reloadImageUris_3", contentUris.toString())
         }
         showImage(binding.ViewList)
+    }
+
+    private fun toSearchString(): String{
+        var searchString = "%"
+        checkedItems.forEach{
+            searchString += "$it%"
+        }
+        Log.d("toSearchString",searchString)
+        return searchString
     }
 
     override fun onItemClickListener(uri :String) {
@@ -200,7 +204,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
 
     override fun onDialogCheckedItems(dialog: DialogFragment, checkedItemList: MutableList<String>) {
         Log.d("onDialogCheckedItems", checkedItemList.toString())
-        imageUris.clear()
+        contentUris.clear()
         checkedItems = checkedItemList
         reloadImageUris()
     }
