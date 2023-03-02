@@ -85,10 +85,8 @@ class SearchByTagDialogFragment: DialogFragment() {
                 }
                 .setPositiveButton("OK") { dialog, id ->
                     selectedItems = returnSelectedTag(tagArray, mSelectedItems)
-                    if(selectedItems.isNotEmpty()){
-                        Log.d("FragmentReturn",selectedItems.toString())
-                        listener?.onDialogCheckedItems(this,selectedItems)
-                    }
+                    Log.d("FragmentReturn",selectedItems.toString())
+                    listener?.onDialogCheckedItems(this,selectedItems)
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
 
