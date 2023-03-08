@@ -12,9 +12,10 @@ import com.dryad.phototag.databinding.ActivityTagSettingBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
-class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
+class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener, AddTagDialogFragment.DialogListener {
 
     private lateinit var binding: ActivityTagSettingBinding
 
@@ -45,14 +46,16 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         }
     }
 
-    private suspend fun setRecyclerView(){
+    private fun setRecyclerView(){
         val recyclerView = binding.tagRecyclerView
 
         val loadTag = GlobalScope.launch {
             tagData = AppDatabase.getDatabase_tag(applicationContext).DataBaseDao().getAllTag()
         }
 
-        loadTag.join()
+        runBlocking {
+            loadTag.join()
+        }
 
         Log.d("tagData",tagData.toString())
         //Adapterの設定
@@ -70,18 +73,27 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         }
     }
 
-    private suspend fun reloadRecyclerView(){
+    private fun reloadRecyclerView(){
         val recyclerView = binding.tagRecyclerView
 
         val loadTag = GlobalScope.launch {
             tagData = AppDatabase.getDatabase_tag(applicationContext).DataBaseDao().getAllTag()
         }
 
-        loadTag.join()
+        runBlocking {
+            loadTag.join()
+        }
 
         Log.d("tagData",tagData.toString())
 
-        recyclerView.adapter?.notifyDataSetChanged()
+        val adapter = TagAdapter(tagData, this)
+        recyclerView.adapter = adapter
+
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+
+        adapter?.notifyDataSetChanged()
+        //notifyするときは、スコープ外ならadapterとlayoutManagerを再度読み込むなりすること
 
     }
 
@@ -90,7 +102,11 @@ class TagSettingActivity : AppCompatActivity(), TagAdapter.ItemClickListener {
         //タグの詳細設定かな？
         //フラグメント起動
         Log.d("Listener","tapped")
+    }
 
+    override fun onTagAddedListener() {
+        Log.d("onTagAddedListener","tag added")
+        reloadRecyclerView()
     }
 
     //アプリバーにメニューを作成するメソッド

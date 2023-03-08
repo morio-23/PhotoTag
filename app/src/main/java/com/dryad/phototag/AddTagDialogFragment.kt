@@ -2,6 +2,7 @@ package com.dryad.phototag
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,25 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AddTagDialogFragment : DialogFragment() {
+    public interface DialogListener{
+        public fun onTagAddedListener()
+    }
+
+    var listener:DialogListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as DialogListener
+        }catch (e: Exception){
+            Log.e("ERROR","CANNOT FIND LISTENER")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
@@ -32,6 +52,7 @@ class AddTagDialogFragment : DialogFragment() {
                         AppDatabase.getDatabase_tag(requireActivity().applicationContext).DataBaseDao().addTag(TagDatabase(0,tagname,""))
                     }
                 }
+                listener?.onTagAddedListener()
             }
             .setNegativeButton("Cancel") { dialog, id ->
 
