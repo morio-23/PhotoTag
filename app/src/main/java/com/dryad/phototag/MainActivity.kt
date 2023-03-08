@@ -15,6 +15,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ActivityMainBinding
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -23,6 +27,7 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchByTagDialogFragment.DialogListener {
 
     private lateinit var binding: ActivityMainBinding
+    lateinit var mAdView : AdView
 
     private var contentUris = mutableListOf<String>()
     private val getdata = mutableListOf<ItemDatabase>()
@@ -48,10 +53,15 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_main)
+        MobileAds.initialize(this) {}
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        mAdView = binding.adView
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
 
         setSupportActionBar(binding.toolbar)
 
