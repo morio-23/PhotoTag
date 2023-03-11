@@ -6,6 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.dryad.phototag.databinding.ActivityViewImageBinding
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -13,14 +16,21 @@ class ViewImageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewImageBinding
     private lateinit var contentUri: String
+    lateinit var mAdView : AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_image)
 
+        MobileAds.initialize(this) {}
+
         binding = ActivityViewImageBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        mAdView = binding.adView
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
 
         setSupportActionBar(binding.toolbar)
 
