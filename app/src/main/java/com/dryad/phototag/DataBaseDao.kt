@@ -18,19 +18,23 @@ interface DataBaseDao {
     @Query("SELECT * FROM item_tbl")
     fun getAllItem(): List<ItemDatabase>
 
-    @Query("SELECT URI FROM item_tbl WHERE tag like :string ")
+    /*Paging用クエリ*/
+    @Query("SELECT * FROM item_tbl LIMIT :limit OFFSET :offset")
+    suspend fun getPagedItem(limit: Int, offset: Int): List<ItemData>
+
+    @Query("SELECT contentUri FROM item_tbl WHERE tag like :string ")
     fun getSearchedItem(string: String): List<String>
     //where in にListを渡したときの返すカラムは一列だけじゃないといけないらしい
 
-    @Query("SELECT displayName FROM item_tbl WHERE URI = :uri")
-    fun returnDisplayName(uri: String): String
+    @Query("SELECT displayName FROM item_tbl WHERE contentUri = :contentUri")
+    fun returnDisplayName(contentUri: String): String
 
     @TypeConverters
-    @Query("SELECT tag FROM item_tbl WHERE URI = :uri")
-    fun returnTagStatus(uri: String): List<String>
+    @Query("SELECT tag FROM item_tbl WHERE contentUri = :contentUri")
+    fun returnTagStatus(contentUri: String): List<String>
 
-    @Query("UPDATE item_tbl SET tag = :tag WHERE URI = :uri")
-    fun updateTag(uri: String,tag: List<String>)
+    @Query("UPDATE item_tbl SET tag = :tag WHERE contentUri = :contentUri")
+    fun updateTag(contentUri: String,tag: List<String>)
 
     @Query("SELECT tagName FROM tag_tbl")
     fun getAllTagName(): Array<String>?

@@ -10,8 +10,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ActivityMainBinding
@@ -20,6 +22,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -27,6 +30,10 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchByTagDialogFragment.DialogListener {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var dao: DataBaseDao
+    private val viewModel: ImageViewModel by viewModels { ImageViewModelFactory(dao) }
+
     lateinit var mAdView : AdView
 
     private var contentUris = mutableListOf<String>()
@@ -54,6 +61,8 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_main)
         MobileAds.initialize(this) {}
+
+        dao = AppDatabase.getDatabase_item(this).DataBaseDao()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -120,7 +129,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
                 Log.d("URI", contentUri.toString())
 
                 contentUris.add(contentUri.toString())
-                getdata.add(ItemDatabase(contentUri.toString(), displayName, listOf("")))
+                getdata.add(ItemDatabase(0, contentUri.toString(), displayName, listOf("")))
             }
         }
 
@@ -140,14 +149,24 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
         Log.d("showImage", "inFunction")
 
         //Adapterの設定
-        val adapter = ItemAdapter(this,contentUris, this)
-        recyclerView.adapter = adapter
+        val adapter = ItemAdapter(this, this)
+        recyclerView.adapter = adapter.withLoadStateFooter(
+            ImageLoadStateAdapter()
+        )
+
+        lifecycleScope.launch {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
+            }
+        }
 
         //LayoutManagerの設定
         val layoutManager = GridLayoutManager(this, colums)
         recyclerView.layoutManager = layoutManager
 
         adapter.notifyDataSetChanged()//ないとListView 再読み込みしない
+
+
     }
 
     private fun reloadImageUris(){
@@ -184,7 +203,7 @@ class MainActivity : AppCompatActivity(), ItemAdapter.ItemClickListener, SearchB
     }
 
     //アプリバーにメニューを作成するメソッド
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //インフレーターを使ってメニューを表示させる
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)

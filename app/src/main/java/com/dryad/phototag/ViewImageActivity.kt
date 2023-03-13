@@ -46,7 +46,7 @@ class ViewImageActivity : AppCompatActivity() {
     }
 
     //アプリバーにメニューを作成するメソッド
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //インフレーターを使ってメニューを表示させる
         val inflater = menuInflater
         inflater.inflate(R.menu.image_menu, menu)

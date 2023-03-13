@@ -1,15 +1,13 @@
 package com.dryad.phototag
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
+import androidx.room.*
 import com.google.gson.Gson
 
 @Entity(tableName = "Item_tbl")
 data class ItemDatabase(
-    @PrimaryKey
-    @ColumnInfo(name = "URI") val uri: String,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id") val id: Int,
+    @ColumnInfo(name = "contentUri") val uri: String,
     @ColumnInfo(name = "displayName") val displayName: String,
     @ColumnInfo(name = "tag") val tag: List<String>
 )
