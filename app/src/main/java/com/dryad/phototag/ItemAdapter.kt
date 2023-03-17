@@ -10,6 +10,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dryad.phototag.databinding.ItemLayoutBinding
+import android.provider.MediaStore
+
 
 
 class ItemAdapter(Context: Context, /*imageUris: MutableList<String>,*/ private val onItemClickListener: ItemClickListener): PagingDataAdapter<ItemData, ItemAdapter.ViewHolder>(
@@ -55,7 +57,8 @@ class ItemAdapter(Context: Context, /*imageUris: MutableList<String>,*/ private 
         val item = getItem(position)
         if(item != null) {
             viewHolder.bindingAdapter.apply {
-                viewHolder.imageView.setImageURI(Uri.parse(item.contentUri.toString()))
+                //viewHolder.imageView.setImageURI(Uri.parse(item.contentUri.toString()))
+                viewHolder.imageView.setImageBitmap(Context.contentResolver.loadThumbnail(item.contentUri))
                 viewHolder.imageView.setOnClickListener{
                     onItemClickListener.onItemClickListener(item.contentUri.toString())
                 }
